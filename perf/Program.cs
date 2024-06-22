@@ -3,22 +3,6 @@ using System;
 using System.Diagnostics;
 
 Random rng = new Random(42);
-float TotalAreaVirt(List<IShape> shapes) {
-    float totalArea = 0.0f;
-    foreach (var shape in shapes ) {
-        totalArea += shape.Area();
-    }
-    return totalArea;
-}
-
-float TotalArea(Shape[] shapes) {
-    float totalArea = 0f;       
-    foreach (var shape in shapes) {
-        totalArea += shape.Area();    
-    } 
-    return totalArea;
-}
-
 Shape CreateShape(ShapeType shapeType) 
 {
     return new Shape {
@@ -43,18 +27,20 @@ IShape CreateShapeVirt(ShapeType ShapeType) {
     }
 }
 
+int n_runs = 400_000;
 List<IShape> shapesVirt = new List<IShape>();
-Shape[] shapes = new Shape[100000];
-for (int i = 0; i < 100000; i++) {    
+Shape[] shapes = new Shape[n_runs];
+for (int i = 0; i < n_runs; i++) {    
     ShapeType ShapeType = (ShapeType)rng.Next(0,3);
     shapesVirt.Add(CreateShapeVirt(ShapeType));
     shapes[i] = CreateShape(ShapeType);
-} 
+}
+
 void BenchVirt(int n_runs) {
     Stopwatch sw = new Stopwatch();
     sw.Start();
     for (int i = 0; i < n_runs; i++) {
-        TotalAreaVirt(shapesVirt);
+        TotalArea.Virt(shapesVirt);
     }
     TimeSpan ts = sw.Elapsed;    
     Console.WriteLine($"Virtual. Time for {n_runs}: {ts.Milliseconds}");
@@ -63,7 +49,7 @@ void BenchInlined(int n_runs) {
     Stopwatch sw = new Stopwatch();
     sw.Start();
     for (int i = 0; i < n_runs; i++) {
-        TotalArea(shapes);
+        TotalArea.Inlined(shapes);
     }
     TimeSpan ts = sw.Elapsed;    
     Console.WriteLine($"Inlined. Time for {n_runs}: {ts.Milliseconds}");

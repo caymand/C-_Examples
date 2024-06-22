@@ -1,4 +1,4 @@
-interface IShape {
+public interface IShape {
     public float Area();
 }
 
